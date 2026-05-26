@@ -141,7 +141,17 @@
   function renderRows(node, table) {
     const tbody = node.querySelector("tbody");
     tbody.innerHTML = "";
-    const groups = groupRows(table.rows || []);
+    const rows = (table.rows || []).slice().sort((a, b) => {
+      if (a.day_number !== b.day_number) return a.day_number - b.day_number;
+      if (a.exercise_name !== b.exercise_name) return a.exercise_name.localeCompare(b.exercise_name);
+      return a.set_number - b.set_number;
+    });
+    const groups = groupRows(rows);
+    const dayCounts = rows.reduce((acc, row) => {
+      acc[row.day_number] = (acc[row.day_number] || 0) + 1;
+      return acc;
+    }, {});
+    const seenDays = new Set();
     let rowIdx = 0;
 
     groups.forEach((g) => {
@@ -151,13 +161,14 @@
         tr.style.animationDelay = `${Math.min(rowIdx * 24, 240)}ms`;
         rowIdx += 1;
 
+        const showDay = !seenDays.has(row.day_number);
+        if (showDay) {
+          tr.appendChild(cellDay(row, table, dayCounts[row.day_number]));
+          seenDays.add(row.day_number);
+        }
+
         if (idx === 0) {
-          tr.appendChild(
-            cellDay(row, table, g.rows.length)
-          );
-          tr.appendChild(
-            cellExercise(row, table, g.rows.length)
-          );
+          tr.appendChild(cellExercise(row, table, g.rows.length));
         }
 
         tr.appendChild(cellSet(row, table));
