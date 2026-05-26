@@ -233,11 +233,11 @@ a:hover {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  background: rgba(240, 240, 240, 0.16);
-  filter: blur(8px);
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(0.16);
-  animation: smokeFloat 2.6s ease-out forwards;
+  background: radial-gradient(circle, rgba(235, 255, 240, 0.40) 0%, rgba(170, 235, 205, 0.18) 45%, transparent 100%);
+  filter: blur(4px);
+  opacity: 0.4;
+  transform: translate(-50%, -50%) scale(0.18);
+  animation: smokeFloat 3.2s ease-out forwards;
 }
 
 .typing-text.from-right {

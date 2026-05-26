@@ -84,6 +84,7 @@ function initInteractionWaves() {
   layer.className = "interaction-layer";
   document.body.appendChild(layer);
 
+  spawnAmbientSmoke(layer, 3);
   let lastMove = 0;
 
   document.addEventListener("mousemove", (event) => {
@@ -120,18 +121,36 @@ function initInteractionWaves() {
   });
 }
 
+function spawnAmbientSmoke(layer, count) {
+  for (let i = 0; i < count; i++) {
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+    const size = 38 + Math.random() * 30;
+    const smoke = document.createElement("span");
+    smoke.className = "smoke-particle";
+    smoke.style.left = `${x}px`;
+    smoke.style.top = `${y}px`;
+    smoke.style.width = `${size}px`;
+    smoke.style.height = `${size * 0.7}px`;
+    smoke.style.opacity = 0.22;
+    smoke.style.animation = `smokeFloat ${4 + Math.random() * 2}s ease-out forwards`;
+    layer.appendChild(smoke);
+    setTimeout(() => smoke.remove(), 5200);
+  }
+}
+
 function createSmoke(layer, x, y, size, opacity) {
   const smoke = document.createElement("span");
   smoke.className = "smoke-particle";
   smoke.style.left = `${x}px`;
   smoke.style.top = `${y}px`;
-  smoke.style.width = `${size + Math.random() * 12}px`;
-  smoke.style.height = `${size + Math.random() * 12}px`;
+  smoke.style.width = `${size + Math.random() * 18}px`;
+  smoke.style.height = `${size + Math.random() * 18}px`;
   smoke.style.opacity = opacity;
   layer.appendChild(smoke);
   setTimeout(() => {
     smoke.remove();
-  }, 2800);
+  }, 3200);
 }
 
 function createWave(layer, x, y, size, opacity) {
