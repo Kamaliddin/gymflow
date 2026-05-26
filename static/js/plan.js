@@ -47,7 +47,9 @@
     }
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
-      throw new Error(err.detail || "Request failed");
+      console.error("API error", path, res.status, err);
+      const msg = typeof err.detail === "string" ? err.detail : JSON.stringify(err.detail || err || "Request failed");
+      throw new Error(msg || "Request failed");
     }
     return res.json();
   }
@@ -64,8 +66,18 @@
       container.innerHTML = '<p class="plan-empty">Log in to view your workout plan.</p>';
       return;
     }
-    planData = await api(qs());
-    renderTables();
+    try {
+      planData = await api(qs());
+      try {
+        renderTables();
+      } catch (err) {
+        console.error("renderTables failed", err, planData);
+        container.innerHTML = '<p class="plan-empty">Failed to render plan: ' + (err.message || err) + '</p>';
+      }
+    } catch (err) {
+      console.error("loadPlan failed", err);
+      container.innerHTML = '<p class="plan-empty">Failed to load plan: ' + (err.message || err) + '</p>';
+    }
   }
 
   function tablesForView() {
