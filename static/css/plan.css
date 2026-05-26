@@ -115,6 +115,8 @@
 
 .wt-scroll {
   overflow-x: auto;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
 }
 
 .wt-grid {
@@ -156,17 +158,44 @@
 .wt-grid select {
   width: 100%;
   min-width: 60px;
-  padding: 0.35rem 0.4rem;
-  background: var(--color-base);
-  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.6rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
-  color: var(--color-accent);
+  color: white;
   font-size: inherit;
+  font-weight: 500;
+}
+
+.wt-grid input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.wt-grid input[type="checkbox"],
+.wt-grid input[type="number"] {
+  width: auto;
+  min-width: auto;
+  padding: 0.5rem;
+}
+
+.wt-grid input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  accent-color: #78ffb4;
 }
 
 .wt-grid td.exercise-cell {
   position: relative;
   min-width: 140px;
+  color: #78ffb4;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.wt-grid td.exercise-cell input {
+  color: #78ffb4;
+  font-weight: 600;
 }
 
 .exercise-dropdown {
@@ -269,7 +298,10 @@
 
 .wt-grid input:focus,
 .wt-grid select:focus {
-  box-shadow: 0 0 0 2px rgba(120, 255, 180, 0.22);
+  outline: none;
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(120, 255, 180, 0.6);
+  box-shadow: 0 0 0 2px rgba(120, 255, 180, 0.15);
 }
 
 .check-pop {
@@ -280,4 +312,197 @@
   0% { transform: scale(1); }
   50% { transform: scale(1.16); }
   100% { transform: scale(1); }
+}
+
+/* Delete buttons for exercises and sets */
+.delete-exercise-btn,
+.delete-set-btn {
+  background: rgba(255, 100, 100, 0.2);
+  border: 1px solid rgba(255, 100, 100, 0.4);
+  color: #ff6464;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 0.4rem;
+  padding: 0;
+  transition: all 200ms ease;
+}
+
+.delete-exercise-btn:hover,
+.delete-set-btn:hover {
+  background: rgba(255, 100, 100, 0.4);
+  border-color: rgba(255, 100, 100, 0.6);
+}
+
+.delete-exercise-btn {
+  margin-bottom: 0;
+}
+
+/* Add Exercise Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  position: relative;
+  background: var(--color-primary-dark);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  z-index: 301;
+}
+
+.modal-content h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: var(--color-accent);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-form label {
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.exercise-search-wrap {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.modal-form input {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius);
+  color: white;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.modal-form input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.suggestions-list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: var(--color-primary);
+  border: 1px solid var(--color-accent);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  max-height: 200px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 302;
+}
+
+.suggestions-list.hidden {
+  display: none;
+}
+
+.suggestions-list li {
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--color-accent);
+  transition: background 150ms ease;
+}
+
+.suggestions-list li:hover {
+  background: var(--color-primary-dark);
+}
+
+.modal-form input[type="number"] {
+  width: 100%;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  justify-content: flex-end;
+}
+
+.modal-actions .btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+}
+
+/* Mobile responsive */
+@media (max-width: 640px) {
+  .wt-grid input,
+  .wt-grid select {
+    padding: 0.75rem;
+    font-size: 1rem;
+    min-height: 44px;
+  }
+
+  .wt-grid input[type="checkbox"] {
+    width: 1.5rem;
+    height: 1.5rem;
+    min-height: 44px;
+  }
+
+  .wt-grid input[type="number"] {
+    min-height: 44px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 1.25rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions .btn {
+    width: 100%;
+  }
+
+  .delete-exercise-btn,
+  .delete-set-btn {
+    width: 32px;
+    height: 32px;
+  }
 }

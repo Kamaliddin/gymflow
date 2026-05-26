@@ -408,20 +408,14 @@
       });
     });
 
-    node.querySelector(".btn-add-row").addEventListener("click", async () => {
-      const last = (table.rows || []).slice(-1)[0];
-      await api(`/api/tables/${tableId}/rows`, {
-        method: "POST",
-        body: JSON.stringify({
-          table_id: tableId,
-          day_number: last?.day_number || 1,
-          exercise_name: last?.exercise_name || "",
-          set_number: (last?.set_number || 0) + 1,
-          weight: 0,
-        }),
-      });
-      await loadPlan();
+    node.querySelector(".btn-add-exercise").addEventListener("click", () => {
+      openAddExerciseModal(tableId, table);
     });
+
+    // Add delete button to exercise rows (first set of each exercise)
+    setTimeout(() => {
+      renderDeleteControls(node, table);
+    }, 0);
 
     node.querySelectorAll("thead th").forEach((th) => {
       const col = th.dataset.col;
@@ -464,6 +458,171 @@
     permPanel.classList.add("hidden");
     permBackdrop.classList.add("hidden");
     activePerm = { tableId: null, column: null };
+  }
+
+  // ===== NEW: Add Exercise Modal and Set Management =====
+  const exerciseModal = document.getElementById("exercise-modal");
+  const modalOverlay = exerciseModal?.querySelector(".modal-overlay");
+  const exerciseSearch = document.getElementById("exercise-search");
+  const suggestionsList = document.getElementById("exercise-suggestions");
+  const setsCountInput = document.getElementById("sets-count");
+  const modalConfirm = document.getElementById("modal-confirm");
+  const modalCancel = document.getElementById("modal-cancel");
+
+  let activeExerciseModal = { tableId: null, table: null };
+
+  function openAddExerciseModal(tableId, table) {
+    exerciseSearch.value = "";
+    setsCountInput.value = "1";
+    suggestionsList.classList.add("hidden");
+    activeExerciseModal = { tableId, table };
+    exerciseModal.classList.remove("hidden");
+    exerciseModal.setAttribute("aria-hidden", "false");
+    exerciseSearch.focus();
+  }
+
+  function closeAddExerciseModal() {
+    exerciseModal.classList.add("hidden");
+    exerciseModal.setAttribute("aria-hidden", "true");
+    activeExerciseModal = { tableId: null, table: null };
+  }
+
+  let exerciseSearchDebounce;
+  exerciseSearch?.addEventListener("input", () => {
+    clearTimeout(exerciseSearchDebounce);
+    const q = exerciseSearch.value.trim();
+    if (q.length < 1) {
+      suggestionsList.classList.add("hidden");
+      return;
+    }
+    exerciseSearchDebounce = setTimeout(async () => {
+      const items = await api(`/api/exercises?q=${encodeURIComponent(q)}`);
+      suggestionsList.innerHTML = "";
+      items.forEach((ex) => {
+        const li = document.createElement("li");
+        li.textContent = ex.name;
+        li.addEventListener("click", () => {
+          exerciseSearch.value = ex.name;
+          exerciseSearch.dataset.exerciseId = ex.id;
+          suggestionsList.classList.add("hidden");
+        });
+        suggestionsList.appendChild(li);
+      });
+      if (items.length > 0) {
+        suggestionsList.classList.remove("hidden");
+      }
+    }, 200);
+  });
+
+  modalConfirm?.addEventListener("click", async () => {
+    const exerciseName = exerciseSearch.value.trim();
+    const setCount = parseInt(setsCountInput.value, 10) || 1;
+    if (!exerciseName) {
+      alert("Please enter an exercise name");
+      return;
+    }
+    if (setCount < 1) {
+      alert("At least 1 set is required");
+      return;
+    }
+    closeAddExerciseModal();
+    await addExerciseWithSets(
+      activeExerciseModal.tableId,
+      activeExerciseModal.table,
+      exerciseName,
+      setCount,
+      exerciseSearch.dataset.exerciseId || null
+    );
+  });
+
+  modalCancel?.addEventListener("click", closeAddExerciseModal);
+  modalOverlay?.addEventListener("click", closeAddExerciseModal);
+
+  async function addExerciseWithSets(tableId, table, exerciseName, setCount, exerciseId) {
+    const last = (table.rows || []).slice(-1)[0];
+    const dayNumber = last?.day_number || 1;
+
+    for (let i = 1; i <= setCount; i++) {
+      await api(`/api/tables/${tableId}/rows`, {
+        method: "POST",
+        body: JSON.stringify({
+          table_id: tableId,
+          day_number: dayNumber,
+          exercise_name: exerciseName,
+          exercise_id: exerciseId || null,
+          set_number: i,
+          weight: 0,
+        }),
+      });
+    }
+    await loadPlan();
+  }
+
+  function renderDeleteControls(node, table) {
+    const tbody = node.querySelector("tbody");
+    let lastExercise = null;
+
+    tbody.querySelectorAll("tr").forEach((tr, idx) => {
+      const rowId = tr.dataset.rowId;
+      const row = table.rows.find((r) => r.id == rowId);
+      if (!row) return;
+
+      const exerciseName = row.exercise_name;
+      const isFirstSetOfExercise = lastExercise !== exerciseName;
+      lastExercise = exerciseName;
+
+      // Add delete button in a pseudo-column
+      if (isFirstSetOfExercise) {
+        // Create delete exercise button
+        const exerciseCells = tr.querySelectorAll("td");
+        if (exerciseCells.length > 0) {
+          const firstCell = exerciseCells[0];
+          const deleteBtn = document.createElement("button");
+          deleteBtn.type = "button";
+          deleteBtn.className = "delete-exercise-btn";
+          deleteBtn.textContent = "✕";
+          deleteBtn.title = "Delete entire exercise";
+          deleteBtn.addEventListener("click", async () => {
+            if (confirm(`Delete all sets of "${exerciseName}"?`)) {
+              await deleteExercise(table, exerciseName, node);
+            }
+          });
+          firstCell.insertBefore(deleteBtn, firstCell.firstChild);
+        }
+      }
+
+      // Add delete set button for each row
+      const lastCell = tr.querySelector("td:last-child");
+      if (lastCell && !lastCell.querySelector(".delete-set-btn")) {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.type = "button";
+        deleteBtn.className = "delete-set-btn";
+        deleteBtn.textContent = "✕";
+        deleteBtn.title = "Delete this set";
+        deleteBtn.addEventListener("click", async () => {
+          await deleteSet(row.id, exerciseName, table, node);
+        });
+        lastCell.appendChild(deleteBtn);
+      }
+    });
+  }
+
+  async function deleteExercise(table, exerciseName, node) {
+    const rowsToDelete = table.rows.filter((r) => r.exercise_name === exerciseName);
+    for (const row of rowsToDelete) {
+      await api(`/api/rows/${row.id}`, { method: "DELETE" });
+    }
+    await loadPlan();
+  }
+
+  async function deleteSet(rowId, exerciseName, table, node) {
+    const exerciseSets = table.rows.filter((r) => r.exercise_name === exerciseName);
+    if (exerciseSets.length <= 1) {
+      alert("Cannot delete the last set of an exercise");
+      return;
+    }
+    await api(`/api/rows/${rowId}`, { method: "DELETE" });
+    await loadPlan();
   }
 
   document.getElementById("btn-add-table")?.addEventListener("click", async () => {

@@ -92,8 +92,29 @@
       </table>
     </div>
     <footer class="wt-actions">
-      <button type="button" class="btn btn-ghost btn-add-row">+ Add row</button>
+      <button type="button" class="btn btn-ghost btn-add-exercise">+ Add Exercise</button>
     </footer>
   </article>
 </template>
+
+<!-- Add Exercise Modal -->
+<div id="exercise-modal" class="modal hidden" aria-hidden="true">
+  <div class="modal-overlay"></div>
+  <div class="modal-content">
+    <h3>Add Exercise</h3>
+    <div class="modal-form">
+      <label>Exercise Name</label>
+      <div class="exercise-search-wrap">
+        <input type="text" id="exercise-search" placeholder="Search or type new exercise...">
+        <ul id="exercise-suggestions" class="suggestions-list hidden"></ul>
+      </div>
+      <label style="margin-top: 1rem;">Number of Sets</label>
+      <input type="number" id="sets-count" min="1" max="10" value="1">
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="modal-confirm">Add</button>
+        <button type="button" class="btn btn-ghost" id="modal-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
