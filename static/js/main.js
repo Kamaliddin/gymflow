@@ -31,28 +31,44 @@ function initProfileMenu() {
 }
 
 function animateBlocks() {
-  const blocks = [
+  const slideItems = [
     document.querySelector(".content-panel"),
-    ...document.querySelectorAll(".card, .page-header, .page-header h1, .page-header h2, .nav-link, .btn, .alert"),
+    ...document.querySelectorAll(".page-header, .page-header h1, .page-header h2, .card"),
   ].filter(Boolean);
-  const animationClasses = ["animate-slide-in", "animate-rotate-in", "animate-fade-in"];
-  blocks.forEach((el, index) => {
-    const animation = animationClasses[index % animationClasses.length];
-    el.classList.add(animation);
-    el.style.animationDelay = `${Math.min(index * 55, 400)}ms`;
+  const fadeItems = Array.from(document.querySelectorAll(".nav-link, .btn, .alert, .profile-wrap"));
+
+  slideItems.forEach((el, index) => {
+    el.classList.add("animate-slide-in");
+    el.style.animationDelay = `${index * 80}ms`;
+  });
+
+  fadeItems.forEach((el, index) => {
+    el.classList.add("animate-fade-in");
+    el.style.animationDelay = `${Math.max(120, index * 50)}ms`;
   });
 }
 
 function initTypingText() {
   const textTargets = document.querySelectorAll(".page-header h1, .page-header h2, .content-panel h1, .content-panel h2, .login h1");
   textTargets.forEach((heading) => {
-    if (!heading.textContent.trim()) return;
+    const text = heading.textContent.trim();
+    if (!text) return;
+
     const wrapper = document.createElement("span");
     wrapper.className = "typing-text text-unite";
-    wrapper.textContent = heading.textContent.trim();
+    const charCount = text.length;
+    const duration = Math.max(1.2, charCount * 0.06);
+    wrapper.textContent = text;
     heading.textContent = "";
     heading.appendChild(wrapper);
-    wrapper.style.animationDelay = "150ms";
+
+    wrapper.style.animation = `typing-left ${duration}s steps(${charCount}, end) forwards, blink 0.8s step-end infinite alternate`;
+    wrapper.style.animationDelay = "120ms";
+
+    if (window.getComputedStyle(heading).textAlign === "right") {
+      wrapper.classList.add("from-right");
+      wrapper.style.animation = `typing-right ${duration}s steps(${charCount}, end) forwards, blink 0.8s step-end infinite alternate`;
+    }
   });
 }
 

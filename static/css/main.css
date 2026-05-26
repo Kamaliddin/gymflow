@@ -208,31 +208,32 @@ a:hover {
 .animate-slide-in {
   opacity: 0;
   transform: translateY(18px);
-  animation: slideIn 0.75s cubic-bezier(.2, .8, .2, 1) forwards;
-}
-
-.animate-rotate-in {
-  opacity: 0;
-  transform: translateY(20px) rotate(-14deg) scale(0.98);
-  animation: rotateSlideIn 0.85s cubic-bezier(.2, .8, .2, 1) forwards;
+  animation: slideIn 0.72s cubic-bezier(.2, .8, .2, 1) forwards;
 }
 
 .animate-fade-in {
   opacity: 0;
-  animation: fadeIn 0.7s ease forwards;
+  animation: fadeIn 0.72s ease forwards;
 }
 
 .typing-text {
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
+  width: 0;
   border-right: 1.5px solid rgba(240, 240, 240, 0.85);
-  animation: typing 1.8s steps(28, end) forwards, blink 0.8s step-end infinite alternate;
+  animation: blink 0.8s step-end infinite alternate;
+}
+
+.typing-text.from-right {
+  text-align: right;
+  direction: ltr;
+  transform-origin: right;
 }
 
 .text-unite {
   display: inline-block;
-  animation: uniteBack 0.85s ease both;
+  animation: uniteBack 0.82s ease both;
 }
 
 @keyframes slideIn {
@@ -246,17 +247,6 @@ a:hover {
   }
 }
 
-@keyframes rotateSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(24px) rotate(-20deg) scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) rotate(0deg) scale(1);
-  }
-}
-
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -266,9 +256,30 @@ a:hover {
   }
 }
 
-@keyframes typing {
+@keyframes typing-left {
   from { width: 0; }
   to { width: 100%; }
+}
+
+@keyframes typing-right {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes uniteBack {
+  0% {
+    opacity: 0;
+    transform: scale(0.88) translateY(8px);
+    filter: blur(1px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.04) translateY(0);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes blink {
