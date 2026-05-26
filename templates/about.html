@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/about.css">{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <h1>About GymFlow</h1>
+</section>
+
+<div class="about-content">
+  <article class="card">
+    <h2>One platform for your whole gym</h2>
+    <p>GymFlow connects admins, trainers, and members with workout tables and column permissions.</p>
+  </article>
+
+  <div class="role-grid">
+    <article class="card">
+      <h3>Admin</h3>
+      <p>Add trainers and members to the gym database.</p>
+    </article>
+    <article class="card">
+      <h3>Trainer</h3>
+      <p>Connect members, build workout tables, and lock columns or checkboxes per set.</p>
+    </article>
+    <article class="card">
+      <h3>Member</h3>
+      <p>View workout tables and edit only unlocked columns. Ask your trainer in person to be added to their roster.</p>
+    </article>
+  </div>
+
+  <article class="card palette-card">
+    <h3>Design System</h3>
+    <p>Built on a 6:3:1 color ratio — deep black backgrounds, forest green surfaces, and light accent text for clarity and focus.</p>
+    <div class="swatches">
+      <span class="swatch swatch-base" title="Base"></span>
+      <span class="swatch swatch-primary" title="Primary"></span>
+      <span class="swatch swatch-primary-dark" title="Primary Dark"></span>
+      <span class="swatch swatch-accent" title="Accent"></span>
+    </div>
+  </article>
+</div>
+{% endblock %}

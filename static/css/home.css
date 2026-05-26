@@ -1,0 +1,69 @@
+.hero {
+  margin-bottom: 2.5rem;
+  padding: 2rem 0;
+}
+
+.hero h1 {
+  font-size: 2.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero-sub {
+  color: var(--color-accent-muted);
+  font-size: 1.1rem;
+  max-width: 520px;
+  margin-bottom: 1.5rem;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.grid-cards .card h3 {
+  margin-bottom: 0.5rem;
+}
+
+.grid-cards .card p {
+  color: var(--color-accent-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.card-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.section-block h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.session-list {
+  list-style: none;
+}
+
+.session-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  background: var(--color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-bottom: 0.5rem;
+}
+
+.session-item span {
+  color: var(--color-accent-muted);
+  font-size: 0.875rem;
+}

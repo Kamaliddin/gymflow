@@ -1,0 +1,283 @@
+.plan-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.plan-sub {
+  color: var(--color-accent-muted);
+  font-size: 0.9rem;
+}
+
+.plan-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.day-filter-label {
+  font-size: 0.85rem;
+  color: var(--color-accent-muted);
+}
+
+.day-filter-label select {
+  margin-left: 0.35rem;
+  padding: 0.4rem 0.6rem;
+  background: var(--color-primary-dark);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-accent);
+}
+
+#tables-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.workout-table {
+  padding: 0;
+  overflow: hidden;
+}
+
+.wt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--color-border);
+  gap: 0.5rem;
+}
+
+.wt-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  color: var(--color-accent);
+  width: 100%;
+  max-width: 280px;
+}
+
+.wt-meta {
+  font-size: 0.8rem;
+  color: var(--color-accent-muted);
+  margin-top: 0.25rem;
+}
+
+.wt-menu-wrap {
+  position: relative;
+}
+
+.wt-menu-btn {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-accent);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.wt-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 4px;
+  background: var(--color-primary-dark);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  min-width: 160px;
+  z-index: 50;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.wt-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 0.6rem 1rem;
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.wt-menu button:hover {
+  background: var(--color-primary);
+}
+
+.wt-scroll {
+  overflow-x: auto;
+}
+
+.wt-grid {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.wt-grid thead th {
+  padding: 0.75rem 0.5rem;
+  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-primary-dark);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.wt-grid thead th.col-dimmed {
+  opacity: 0.45;
+}
+
+.wt-grid td {
+  padding: 0.4rem 0.35rem;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.wt-grid td.locked,
+.wt-grid td.locked input,
+.wt-grid td.locked select {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.wt-grid input,
+.wt-grid select {
+  width: 100%;
+  min-width: 60px;
+  padding: 0.35rem 0.4rem;
+  background: var(--color-base);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-accent);
+  font-size: inherit;
+}
+
+.wt-grid td.exercise-cell {
+  position: relative;
+  min-width: 140px;
+}
+
+.exercise-dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  background: var(--color-primary-dark);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  max-height: 160px;
+  overflow-y: auto;
+  z-index: 40;
+  list-style: none;
+}
+
+.exercise-dropdown li {
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.exercise-dropdown li:hover {
+  background: var(--color-primary);
+}
+
+.wt-grid td[rowspan] {
+  vertical-align: middle;
+}
+
+.wt-footer td {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--color-accent-muted);
+  padding-top: 0.65rem;
+}
+
+.wt-actions {
+  padding: 0.75rem 1.25rem;
+  border-top: 1px solid var(--color-border);
+}
+
+/* Permission panel — fixed right, no layout shift */
+.perm-panel {
+  position: fixed;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 240px;
+  background: var(--color-primary-dark);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  z-index: 200;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+.perm-panel h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.perm-col-name {
+  font-size: 0.85rem;
+  color: var(--color-accent-muted);
+  margin-bottom: 1rem;
+  text-transform: capitalize;
+}
+
+.perm-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.perm-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 199;
+}
+
+.plan-empty {
+  text-align: center;
+  padding: 3rem;
+  color: var(--color-accent-muted);
+}
+
+/* Table animations */
+.wt-grid tbody tr {
+  animation: rowIn 460ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+@keyframes rowIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.wt-grid input:focus,
+.wt-grid select:focus {
+  box-shadow: 0 0 0 2px rgba(120, 255, 180, 0.22);
+}
+
+.check-pop {
+  animation: checkPop 260ms ease both;
+}
+
+@keyframes checkPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.16); }
+  100% { transform: scale(1); }
+}

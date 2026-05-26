@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ page_title }} — GymFlow{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/main.css">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <div class="bg-stickers" aria-hidden="true">
+    <img class="sticker sticker-tl" src="/static/images/stickers/leaf.svg" alt="">
+    <img class="sticker sticker-tr" src="/static/images/stickers/barbell.svg" alt="">
+    <img class="sticker sticker-bl" src="/static/images/stickers/dumbbell.svg" alt="">
+    <img class="sticker sticker-br" src="/static/images/stickers/kettlebell.svg" alt="">
+  </div>
+
+  <header class="site-header">
+    <a href="/" class="logo">Gym<span>Flow</span></a>
+    <nav class="header-nav">
+      {% if user %}
+      <div class="profile-wrap">
+        <button type="button" class="profile-btn" id="profile-menu-btn" aria-label="Profile menu">
+          <a href="/profile" class="profile-link" title="Edit profile">
+          {% if user.profile_pic %}
+          <img src="{{ user.profile_pic }}" alt="" class="profile-img">
+          {% else %}
+          <span class="profile-initials">{{ user.name[0] }}{{ user.surname[0] if user.surname else '' }}</span>
+          {% endif %}
+          </a>
+        </button>
+        <div class="profile-menu hidden" id="profile-menu">
+          <p class="profile-menu-name">{{ user.display_name }}</p>
+          <p class="profile-menu-role">{{ user.role.value|capitalize }}</p>
+          <a href="/profile">Edit Profile</a>
+          <a href="/logout">Logout</a>
+        </div>
+      </div>
+      {% else %}
+      <a href="/login" class="btn btn-primary">Login</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a href="/" class="nav-link{% if active_page == 'home' %} active{% endif %}">Home</a>
+        <a href="/plan" class="nav-link{% if active_page == 'plan' %} active{% endif %}">Workout Plan</a>
+        {% if user and user.role.value == 'trainer' %}
+        <a href="/members" class="nav-link{% if active_page == 'members' %} active{% endif %}">Members</a>
+        {% endif %}
+        {% if user and user.role.value == 'admin' %}
+        <a href="/controls" class="nav-link{% if active_page == 'controls' %} active{% endif %}">Admin</a>
+        {% endif %}
+        <a href="/calendar" class="nav-link{% if active_page == 'calendar' %} active{% endif %}">Calendar</a>
+        <a href="/about" class="nav-link{% if active_page == 'about' %} active{% endif %}">About</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="content-panel">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 GymFlow — Train smarter. Move better.</p>
+  </footer>
+
+  <script src="/static/js/main.js"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

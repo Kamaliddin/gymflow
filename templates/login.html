@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/auth.css">{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="card auth-card">
+    <h1>Sign In</h1>
+    {% if error == 'invalid' %}
+    <p class="alert alert-error">Invalid username or password.</p>
+    {% endif %}
+    <form method="post" action="/login" class="form">
+      <label for="username">Username <span class="req">*</span></label>
+      <input type="text" id="username" name="username" required autocomplete="username">
+
+      <label for="password">Password <span class="req">*</span></label>
+      <input type="password" id="password" name="password" required autocomplete="current-password">
+
+      <button type="submit" class="btn btn-primary btn-block">Login</button>
+    </form>
+    <p class="auth-footer">Need an account? Ask your gym admin to create one for you.</p>
+    <p class="auth-hint">Demo: <strong>admin</strong>, <strong>alex_coach</strong>, <strong>jordan</strong> — password <strong>demo123</strong></p>
+  </div>
+</div>
+{% endblock %}

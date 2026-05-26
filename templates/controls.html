@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/controls.css">{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <h1>Admin Controls</h1>
+  <p>Create accounts for trainers and members — only admins can add users.</p>
+</section>
+
+{% if success == 'created' %}
+<p class="alert alert-success">User created successfully.</p>
+{% endif %}
+{% if error == 'username_exists' %}
+<p class="alert alert-error">Username already exists.</p>
+{% endif %}
+
+<section class="controls-section">
+  <h2>Add User to Gym</h2>
+  <div class="card">
+    <form method="post" action="/admin/users" class="form form-grid">
+      <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required minlength="6">
+      </div>
+      <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div>
+        <label for="surname">Surname</label>
+        <input type="text" id="surname" name="surname">
+      </div>
+      <div>
+        <label for="role">Role</label>
+        <select id="role" name="role">
+          <option value="member">Member</option>
+          <option value="trainer">Trainer</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="form-span">
+        <button type="submit" class="btn btn-primary">Create User</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<section class="controls-section">
+  <h2>Gym Users</h2>
+  <div class="card table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Name</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>{{ u.username }}</td>
+          <td>{{ u.display_name }}</td>
+          <td><span class="badge">{{ u.role.value }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

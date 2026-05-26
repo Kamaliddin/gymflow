@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/plan.css">{% endblock %}
+{% block extra_js %}<script src="/static/js/plan.js" defer></script>{% endblock %}
+
+{% block content %}
+<section class="plan-toolbar">
+  <div class="plan-title">
+    <h1>Workout Plan</h1>
+    {% if target_member and user and target_member.id != user.id %}
+    <p class="plan-sub">{{ target_member.display_name }}'s tables</p>
+    {% endif %}
+  </div>
+  <div class="plan-actions">
+    <label class="day-filter-label">Day
+      <select id="day-filter">
+        <option value="">All days</option>
+        {% for d in range(1, 8) %}
+        <option value="{{ d }}"{% if day_filter == d %} selected{% endif %}>Day {{ d }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    {% if user %}
+    <button type="button" id="btn-add-table" class="btn btn-primary">+ Add Table</button>
+    {% else %}
+    <a href="/login" class="btn btn-primary">Login to Edit</a>
+    {% endif %}
+  </div>
+</section>
+
+<div id="plan-app"
+     data-member-id="{{ target_member.id if target_member else (user.id if user else '') }}"
+     data-day="{{ day_filter or '' }}"
+     data-role="{{ user.role.value if user else '' }}">
+  <div id="tables-container"></div>
+</div>
+
+<!-- Column permission panel -->
+<aside id="perm-panel" class="perm-panel hidden" aria-hidden="true">
+  <h3>Member control</h3>
+  <p class="perm-col-name" id="perm-col-label"></p>
+  <label class="perm-toggle">
+    <input type="checkbox" id="perm-toggle-input" checked>
+    <span>Allow member control</span>
+  </label>
+  <button type="button" class="btn btn-ghost btn-block" id="perm-close">Close</button>
+</aside>
+<div id="perm-backdrop" class="perm-backdrop hidden"></div>
+
+<template id="table-template">
+  <article class="workout-table card" data-table-id="">
+    <header class="wt-header">
+      <div class="wt-title-row">
+        <input type="text" class="wt-name" value="Workout">
+        <div class="wt-meta">
+          <span class="wt-repeat-days"></span>
+          <span class="wt-time"></span>
+        </div>
+      </div>
+      <div class="wt-menu-wrap">
+        <button type="button" class="wt-menu-btn" aria-label="Table options">⋮</button>
+        <div class="wt-menu hidden">
+          <button type="button" data-action="change-time">Change time</button>
+          <button type="button" data-action="change-days">Change days</button>
+          <button type="button" data-action="delete">Delete table</button>
+        </div>
+      </div>
+    </header>
+    <div class="wt-scroll">
+      <table class="wt-grid">
+        <thead>
+          <tr>
+            <th data-col="day_number">Day</th>
+            <th data-col="exercise_name">Exercise</th>
+            <th data-col="set_number">Set</th>
+            <th data-col="rep_goal">Rep goal</th>
+            <th data-col="weight">Weight</th>
+            <th data-col="time_per_set">Time/set</th>
+            <th data-col="checkbox">Done</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr class="wt-footer">
+            <td colspan="2">Totals / Avg</td>
+            <td class="ft-sets"></td>
+            <td class="ft-reps"></td>
+            <td class="ft-weight"></td>
+            <td class="ft-time"></td>
+            <td class="ft-checks"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <footer class="wt-actions">
+      <button type="button" class="btn btn-ghost btn-add-row">+ Add row</button>
+    </footer>
+  </article>
+</template>
+{% endblock %}

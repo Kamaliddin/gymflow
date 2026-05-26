@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile — {{ page_title }}{% endblock %}
+
+{% block content %}
+<h2>Profile</h2>
+{% if success %}
+<p class="notice success">Profile updated.</p>
+{% endif %}
+<form action="/profile" method="post" enctype="multipart/form-data" class="modal">
+  <label for="name">First name</label>
+  <input id="name" name="name" value="{{ user.name }}" required />
+
+  <label for="surname">Surname</label>
+  <input id="surname" name="surname" value="{{ user.surname }}" />
+
+  <label for="bio">Bio</label>
+  <textarea id="bio" name="bio" rows="4">{{ user.bio }}</textarea>
+
+  <label for="profile_pic_url">Profile image URL</label>
+  <input id="profile_pic_url" name="profile_pic_url" value="{{ user.profile_pic }}" />
+
+  <label for="profile_pic_file">Or upload image</label>
+  <input id="profile_pic_file" name="profile_pic_file" type="file" accept="image/*" />
+
+  <div class="modal-actions">
+    <button type="submit" class="btn btn-primary">Save</button>
+  </div>
+</form>
+{% endblock %}

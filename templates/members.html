@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/members.css">{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <h1>Members</h1>
+  <p>Add members by username after they request you in person. Manage their workout tables from here.</p>
+</section>
+
+{% if request.query_params.get('success') == 'added' %}
+<p class="alert alert-success">Member connected.</p>
+{% endif %}
+{% if request.query_params.get('error') == 'not_found' %}
+<p class="alert alert-error">Member username not found.</p>
+{% endif %}
+
+<div class="members-toolbar">
+  <form method="post" action="/members/add" class="add-member-form">
+    <input type="text" name="username" placeholder="Member username" required>
+    <button type="submit" class="btn btn-primary">+ Add Member</button>
+  </form>
+</div>
+
+{% if members %}
+<ul class="members-list">
+  {% for m in members %}
+  <li>
+    <a href="/plan?member_id={{ m.id }}" class="member-link card">
+      <span class="member-avatar">{{ m.name[0] }}{{ m.surname[0] if m.surname else '' }}</span>
+      <span class="member-info">
+        <strong>{{ m.display_name }}</strong>
+        <span>@{{ m.username }}</span>
+      </span>
+      <span class="member-arrow">→</span>
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<div class="members-empty card">
+  <p>No members yet.</p>
+  <p class="muted">Use <strong>+ Add Member</strong> with their username to connect.</p>
+</div>
+{% endif %}
+{% endblock %}

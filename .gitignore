@@ -1,0 +1,7 @@
+gymflow.db
+__pycache__/
+*.pyc
+uploads/
+.env
+.env.*
+.vscode/

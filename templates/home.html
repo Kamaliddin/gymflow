@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/home.css">{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>Welcome to GymFlow</h1>
+  <p class="hero-sub">Workout tables and gym management in one place.</p>
+  {% if not user %}
+  <div class="hero-actions">
+    <a href="/login" class="btn btn-primary">Login</a>
+  </div>
+  {% else %}
+  <div class="hero-actions">
+    {% if user.role.value == 'trainer' %}
+    <a href="/members" class="btn btn-primary">My Members</a>
+    {% elif user.role.value == 'admin' %}
+    <a href="/controls" class="btn btn-primary">Admin Panel</a>
+    {% else %}
+    <a href="/plan" class="btn btn-primary">My Workout Plan</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+
+<section class="grid-cards">
+  <article class="card">
+    <h3>Workout Tables</h3>
+    <p>Track sets, reps, weight, and time — with trainer-controlled column locks.</p>
+    <a href="/plan" class="card-link">Open plan →</a>
+  </article>
+  <article class="card">
+    <h3>For Trainers</h3>
+    <p>Connect members, build tables, and toggle member edit permissions per column.</p>
+    <a href="/members" class="card-link">Members →</a>
+  </article>
+  <article class="card">
+    <h3>About</h3>
+    <p>Admin, trainer, and member roles with JWT + session auth.</p>
+    <a href="/about" class="card-link">Learn more →</a>
+  </article>
+</section>
+{% endblock %}
