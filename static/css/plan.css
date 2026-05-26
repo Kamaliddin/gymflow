@@ -506,3 +506,25 @@
     height: 32px;
   }
 }
+
+
+/* Per-exercise totals and spacing */
+.exercise-total-row td {
+  padding: 0.6rem 0.8rem;
+  border-bottom: 1px solid var(--color-border);
+  background: rgba(255,255,255,0.02);
+}
+.exercise-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--color-accent-muted);
+  font-weight: 600;
+  padding: 0.25rem 0;
+}
+.exercise-total-value {
+  font-weight: 700;
+  color: var(--color-accent);
+}
+/* Remove entry animation for summary rows to avoid flicker */
+.wt-grid tbody tr.exercise-total-row { animation: none; }

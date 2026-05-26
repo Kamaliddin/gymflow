@@ -178,7 +178,21 @@
         tr.appendChild(cellCheckbox(row, table));
         tbody.appendChild(tr);
       });
-    });
+    
+      // After each exercise group, add a summary/total row
+      const totalValue = g.rows.reduce((acc, r) => {
+        const reps = parseFloat(r.rep_goal) || 0;
+        const weight = parseFloat(r.weight) || 0;
+        return acc + reps * weight;
+      }, 0);
+      const summaryTr = document.createElement("tr");
+      summaryTr.className = "exercise-total-row";
+      const td = document.createElement("td");
+      td.colSpan = 7;
+      td.innerHTML = `<div class=\"exercise-summary\"><span>Total for <strong>${g.rows[0].exercise_name || \"(exercise)\"}</strong></span><span class=\"exercise-total-value\">${totalValue.toFixed(1)}</span></div>`;
+      tbody.appendChild(summaryTr);
+      summaryTr.appendChild(td);
+});
 
     updateFooter(node, table.rows || []);
   }
@@ -626,6 +640,8 @@
   }
 
   document.getElementById("btn-add-table")?.addEventListener("click", async () => {
+  try {
+
     const dayTables = (planData?.tables || []).length;
     if (dayFilter && dayTables >= 3) {
       alert("Maximum 3 tables per day.");
@@ -640,7 +656,12 @@
         name: name || "Workout",
         repeat_days: days,
       }),
-    });
+    
+  } catch (err) {
+    console.error(err);
+    alert('Failed to create table: ' + (err.message || err));
+  }
+});
     await loadPlan();
   });
 
