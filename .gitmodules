@@ -1,0 +1,3 @@
+[submodule "gymflow"]
+	path = gymflow
+	url = https://github.com/Kamaliddin/gym_automation
