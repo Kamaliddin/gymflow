@@ -84,22 +84,25 @@ function initInteractionWaves() {
   layer.className = "interaction-layer";
   document.body.appendChild(layer);
 
-  spawnAmbientSmoke(layer, 3);
+  // initialize canvas smoke system (may be disabled on low-end devices)
+  initCanvasSmoke();
   let lastMove = 0;
 
   document.addEventListener("mousemove", (event) => {
     const now = Date.now();
-    if (now - lastMove < 150) return;
+    if (now - lastMove < 80) return;
     lastMove = now;
     createWave(layer, event.clientX, event.clientY, 10, 0.10);
-    if (Math.random() < 0.18) {
-      createSmoke(layer, event.clientX, event.clientY, 12, 0.14);
+    if (window.canvasSmoke && window.canvasSmoke.enabled) {
+      window.canvasSmoke.attract(event.clientX, event.clientY);
     }
   });
 
   document.addEventListener("click", (event) => {
     createWave(layer, event.clientX, event.clientY, 20, 0.24);
-    createSmoke(layer, event.clientX, event.clientY, 20, 0.16);
+    if (window.canvasSmoke && window.canvasSmoke.enabled) {
+      window.canvasSmoke.burst(event.clientX, event.clientY);
+    }
   });
 
   document.addEventListener("keydown", (event) => {
@@ -107,7 +110,9 @@ function initInteractionWaves() {
     if (target instanceof HTMLElement && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) {
       const rect = target.getBoundingClientRect();
       createWave(layer, rect.left + rect.width / 2, rect.top + rect.height / 2, 14, 0.18);
-      createSmoke(layer, rect.left + rect.width / 2, rect.top + rect.height / 2 + 8, 10, 0.11);
+      if (window.canvasSmoke && window.canvasSmoke.enabled) {
+        window.canvasSmoke.attract(rect.left + rect.width / 2, rect.top + rect.height / 2 + 8);
+      }
     }
   });
 
@@ -116,7 +121,9 @@ function initInteractionWaves() {
     if (target instanceof HTMLElement && ["INPUT", "TEXTAREA"].includes(target.tagName)) {
       const rect = target.getBoundingClientRect();
       createWave(layer, rect.left + rect.width / 2, rect.top + rect.height / 2, 10, 0.12);
-      createSmoke(layer, rect.left + rect.width / 2, rect.top + rect.height / 2 + 8, 8, 0.09);
+      if (window.canvasSmoke && window.canvasSmoke.enabled) {
+        window.canvasSmoke.attract(rect.left + rect.width / 2, rect.top + rect.height / 2 + 8);
+      }
     }
   });
 }
@@ -236,4 +243,127 @@ function smokeTick(now) {
   requestAnimationFrame(smokeTick);
 }
 
-requestAnimationFrame(smokeTick);
+  // Canvas-based smoke system: white flame-like smoke with tails
+  function initCanvasSmoke() {
+    // detect low-performance devices and disable if needed
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isLowPerf = typeof navigator !== 'undefined' && (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+    if (prefersReduced || isLowPerf) {
+      window.canvasSmoke = { enabled: false };
+      return;
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.className = 'canvas-smoke';
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext('2d');
+
+    const PARTICLE_COUNT = 80; // 10x larger than before
+    const particles = [];
+
+    function rand(min, max) { return min + Math.random() * (max - min); }
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: rand(-0.3, 0.3),
+        vy: rand(-0.2, 0.4),
+        life: rand(8, 16),
+        age: Math.random() * 8,
+        size: rand(18, 80),
+        alpha: rand(0.12, 0.32),
+        angle: Math.random() * Math.PI * 2,
+        spin: rand(-0.02, 0.02),
+      });
+    }
+
+    let mouse = null;
+
+    function attract(x, y) {
+      mouse = { x, y, time: performance.now() };
+    }
+
+    function burst(x, y) {
+      for (let i = 0; i < 8; i++) {
+        particles.push({ x: x + rand(-12,12), y: y + rand(-12,12), vx: rand(-1.2,1.2), vy: rand(-1.6,-0.2), life: rand(3,6), age: 0, size: rand(10,36), alpha: 0.45, angle: Math.random()*Math.PI*2, spin: rand(-0.06,0.06) });
+      }
+    }
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+
+    function step(dt) {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      // subtle global haze
+      ctx.fillStyle = 'rgba(255,255,255,0.02)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        // attraction to mouse
+        if (mouse && performance.now() - mouse.time < 1200) {
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const d = Math.hypot(dx, dy) + 0.001;
+          const f = Math.max(0, 1 - d / 380);
+          p.vx += (dx / d) * 0.18 * f * dt * 60;
+          p.vy += (dy / d) * 0.16 * f * dt * 60;
+        } else {
+          // gentle random flow
+          p.vx += (Math.random()-0.5) * 0.02;
+          p.vy += (Math.random()-0.5) * 0.02 - 0.01;
+        }
+
+        p.x += p.vx * dt * 60;
+        p.y += p.vy * dt * 60;
+        p.angle += p.spin * dt * 60;
+        p.age += dt;
+
+        const lifeRatio = 1 - p.age / p.life;
+        const alpha = Math.max(0, Math.min(1, p.alpha * lifeRatio * 1.4));
+
+        // flame-like tail: draw gradient ellipse with motion blur
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.angle);
+        const gradient = ctx.createLinearGradient(-p.size*0.4, 0, p.size*0.8, 0);
+        gradient.addColorStop(0, `rgba(255,255,255,${alpha*0.9})`);
+        gradient.addColorStop(0.6, `rgba(255,255,255,${alpha*0.45})`);
+        gradient.addColorStop(1, `rgba(255,255,255,0)`);
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, p.size*0.6, p.size*0.35, 0, 0, Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+
+        // respawn if dead or far offscreen
+        if (p.age > p.life || p.x < -200 || p.x > canvas.width + 200 || p.y < -200 || p.y > canvas.height + 200) {
+          p.x = Math.random() * canvas.width;
+          p.y = Math.random() * canvas.height;
+          p.vx = rand(-0.3,0.3);
+          p.vy = rand(-0.2,0.4);
+          p.age = 0;
+          p.life = rand(8,16);
+          p.size = rand(18,80);
+          p.alpha = rand(0.18,0.5);
+        }
+      }
+    }
+
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min(0.06, (now - last) / 1000);
+      last = now;
+      step(dt);
+      requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+
+    window.canvasSmoke = { enabled: true, attract, burst };
+  }

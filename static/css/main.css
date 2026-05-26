@@ -229,17 +229,12 @@ a:hover {
   border-right-color: transparent;
 }
 
-.smoke-particle {
-  position: absolute;
-  border-radius: 50%;
+/* canvas-smoke will draw canvas overlay when enabled */
+.canvas-smoke {
+  position: fixed;
+  inset: 0;
   pointer-events: none;
-  /* soft pale green-white smoke with radial falloff */
-  background: radial-gradient(circle, rgba(235,255,240,0.6) 0%, rgba(190,240,210,0.22) 45%, transparent 85%);
-  filter: blur(6px);
-  opacity: 0.32;
-  transform: translate(-50%, -50%) rotate(0deg) scale(0.18);
-  mix-blend-mode: screen;
-  will-change: transform, opacity;
+  z-index: -2;
 }
 
 .typing-text.from-right {
