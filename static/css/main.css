@@ -202,18 +202,18 @@ a:hover {
   overflow: hidden;
   transform: translateY(10px);
   opacity: 0;
-  transition: transform 550ms cubic-bezier(.2, .8, .2, 1), opacity 550ms ease;
+  transition: transform 1.8s cubic-bezier(.2, .8, .2, 1), opacity 1.8s ease;
 }
 
 .animate-slide-in {
   opacity: 0;
   transform: translateY(18px);
-  animation: slideIn 0.72s cubic-bezier(.2, .8, .2, 1) forwards;
+  animation: slideIn 1.9s cubic-bezier(.2, .8, .2, 1) forwards;
 }
 
 .animate-fade-in {
   opacity: 0;
-  animation: fadeIn 0.72s ease forwards;
+  animation: fadeIn 1.9s ease forwards;
 }
 
 .typing-text {
@@ -223,6 +223,21 @@ a:hover {
   width: 0;
   border-right: 1.5px solid rgba(240, 240, 240, 0.85);
   animation: blink 0.8s step-end infinite alternate;
+}
+
+.typing-text.typing-complete {
+  border-right-color: transparent;
+}
+
+.smoke-particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: rgba(240, 240, 240, 0.16);
+  filter: blur(8px);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.16);
+  animation: smokeFloat 2.6s ease-out forwards;
 }
 
 .typing-text.from-right {
@@ -264,6 +279,20 @@ a:hover {
 @keyframes typing-right {
   from { width: 0; }
   to { width: 100%; }
+}
+
+@keyframes smokeFloat {
+  0% {
+    opacity: 0.35;
+    transform: translate(-50%, -50%) scale(0.18);
+  }
+  35% {
+    opacity: 0.28;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(14px, -78px) scale(1.05);
+  }
 }
 
 @keyframes uniteBack {

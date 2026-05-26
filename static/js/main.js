@@ -55,20 +55,27 @@ function initTypingText() {
     if (!text) return;
 
     const wrapper = document.createElement("span");
-    wrapper.className = "typing-text text-unite";
+    wrapper.className = "typing-text text-unite typing-left";
     const charCount = text.length;
-    const duration = Math.max(1.2, charCount * 0.06);
+    const duration = Math.max(2.2, charCount * 0.08);
     wrapper.textContent = text;
     heading.textContent = "";
     heading.appendChild(wrapper);
 
-    wrapper.style.animation = `typing-left ${duration}s steps(${charCount}, end) forwards, blink 0.8s step-end infinite alternate`;
+    const animationName = window.getComputedStyle(heading).textAlign === "right" ? "typing-right" : "typing-left";
+    if (animationName === "typing-right") {
+      wrapper.classList.add("from-right");
+    }
+
+    wrapper.style.animation = `${animationName} ${duration}s steps(${charCount}, end) forwards, blink 0.8s step-end infinite alternate`;
     wrapper.style.animationDelay = "120ms";
 
-    if (window.getComputedStyle(heading).textAlign === "right") {
-      wrapper.classList.add("from-right");
-      wrapper.style.animation = `typing-right ${duration}s steps(${charCount}, end) forwards, blink 0.8s step-end infinite alternate`;
-    }
+    wrapper.addEventListener("animationend", (event) => {
+      if (event.animationName === animationName) {
+        wrapper.classList.add("typing-complete");
+        wrapper.style.borderRightColor = "transparent";
+      }
+    });
   });
 }
 
@@ -81,13 +88,17 @@ function initInteractionWaves() {
 
   document.addEventListener("mousemove", (event) => {
     const now = Date.now();
-    if (now - lastMove < 120) return;
+    if (now - lastMove < 150) return;
     lastMove = now;
-    createWave(layer, event.clientX, event.clientY, 10, 0.12);
+    createWave(layer, event.clientX, event.clientY, 10, 0.10);
+    if (Math.random() < 0.18) {
+      createSmoke(layer, event.clientX, event.clientY, 12, 0.14);
+    }
   });
 
   document.addEventListener("click", (event) => {
-    createWave(layer, event.clientX, event.clientY, 20, 0.25);
+    createWave(layer, event.clientX, event.clientY, 20, 0.24);
+    createSmoke(layer, event.clientX, event.clientY, 20, 0.16);
   });
 
   document.addEventListener("keydown", (event) => {
@@ -95,6 +106,7 @@ function initInteractionWaves() {
     if (target instanceof HTMLElement && ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) {
       const rect = target.getBoundingClientRect();
       createWave(layer, rect.left + rect.width / 2, rect.top + rect.height / 2, 14, 0.18);
+      createSmoke(layer, rect.left + rect.width / 2, rect.top + rect.height / 2 + 8, 10, 0.11);
     }
   });
 
@@ -103,8 +115,23 @@ function initInteractionWaves() {
     if (target instanceof HTMLElement && ["INPUT", "TEXTAREA"].includes(target.tagName)) {
       const rect = target.getBoundingClientRect();
       createWave(layer, rect.left + rect.width / 2, rect.top + rect.height / 2, 10, 0.12);
+      createSmoke(layer, rect.left + rect.width / 2, rect.top + rect.height / 2 + 8, 8, 0.09);
     }
   });
+}
+
+function createSmoke(layer, x, y, size, opacity) {
+  const smoke = document.createElement("span");
+  smoke.className = "smoke-particle";
+  smoke.style.left = `${x}px`;
+  smoke.style.top = `${y}px`;
+  smoke.style.width = `${size + Math.random() * 12}px`;
+  smoke.style.height = `${size + Math.random() * 12}px`;
+  smoke.style.opacity = opacity;
+  layer.appendChild(smoke);
+  setTimeout(() => {
+    smoke.remove();
+  }, 2800);
 }
 
 function createWave(layer, x, y, size, opacity) {
