@@ -300,8 +300,8 @@ function smokeTick(now) {
 
     function step(dt) {
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      // subtle global haze
-      ctx.fillStyle = 'rgba(255,255,255,0.02)';
+      // subtle global haze (dark green tone)
+      ctx.fillStyle = 'rgba(0,102,119,0.02)';
       ctx.fillRect(0,0,canvas.width,canvas.height);
 
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -333,9 +333,10 @@ function smokeTick(now) {
         ctx.translate(p.x, p.y);
         ctx.rotate(p.angle);
         const gradient = ctx.createLinearGradient(-p.size*0.4, 0, p.size*0.8, 0);
-        gradient.addColorStop(0, `rgba(255,255,255,${alpha*0.9})`);
-        gradient.addColorStop(0.6, `rgba(255,255,255,${alpha*0.45})`);
-        gradient.addColorStop(1, `rgba(255,255,255,0)`);
+        // dark green smoke between #056 and #078 -> using #006677 (0,102,119)
+        gradient.addColorStop(0, `rgba(0,102,119,${alpha*0.9})`);
+        gradient.addColorStop(0.6, `rgba(0,102,119,${alpha*0.45})`);
+        gradient.addColorStop(1, `rgba(0,102,119,0)`);
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.ellipse(0, 0, p.size*0.6, p.size*0.35, 0, 0, Math.PI*2);
