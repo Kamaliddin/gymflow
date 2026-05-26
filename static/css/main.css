@@ -66,6 +66,35 @@ body::after {
   z-index: -4;
 }
 
+.interaction-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -2;
+}
+
+.interaction-wave {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0);
+  background: radial-gradient(circle, rgba(120, 255, 180, 0.34) 0%, rgba(120, 255, 180, 0.10) 40%, transparent 65%);
+  filter: blur(1px);
+  animation: wavePulse 0.95s ease-out forwards;
+}
+
+@keyframes wavePulse {
+  from {
+    opacity: 0.36;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.25);
+  }
+}
+
 a {
   color: var(--color-accent);
   text-decoration: none;
@@ -174,6 +203,92 @@ a:hover {
   transform: translateY(10px);
   opacity: 0;
   transition: transform 550ms cubic-bezier(.2, .8, .2, 1), opacity 550ms ease;
+}
+
+.animate-slide-in {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: slideIn 0.75s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+
+.animate-rotate-in {
+  opacity: 0;
+  transform: translateY(20px) rotate(-14deg) scale(0.98);
+  animation: rotateSlideIn 0.85s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+
+.animate-fade-in {
+  opacity: 0;
+  animation: fadeIn 0.7s ease forwards;
+}
+
+.typing-text {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 1.5px solid rgba(240, 240, 240, 0.85);
+  animation: typing 1.8s steps(28, end) forwards, blink 0.8s step-end infinite alternate;
+}
+
+.text-unite {
+  display: inline-block;
+  animation: uniteBack 0.85s ease both;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotateSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) rotate(-20deg) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+@keyframes uniteBack {
+  0% {
+    opacity: 0;
+    transform: scale(0.88) translateY(8px);
+    filter: blur(1px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.04) translateY(0);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+  }
 }
 
 body.is-loaded .content-panel {
