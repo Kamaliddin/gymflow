@@ -133,24 +133,49 @@ function spawnAmbientSmoke(layer, count) {
     smoke.style.width = `${size}px`;
     smoke.style.height = `${size * 0.7}px`;
     smoke.style.opacity = 0.22;
-    smoke.style.animation = `smokeFloat ${4 + Math.random() * 2}s ease-out forwards`;
+    // initial random rotation
+    smoke.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg) scale(${0.14 + Math.random() * 0.22})`;
     layer.appendChild(smoke);
     setTimeout(() => smoke.remove(), 5200);
   }
 }
 
+// Smoke particle manager: simulated particles with simple physics
+const smokeManager = {
+  particles: [],
+  max: 80,
+  layer: null,
+};
+
+function addParticle(el, x, y, w, h, opacity) {
+  if (smokeManager.particles.length >= smokeManager.max) {
+    // reuse oldest
+    const p = smokeManager.particles.shift();
+    p.el.remove();
+  }
+  const vx = (Math.random() - 0.5) * 0.4;
+  const vy = (Math.random() - 0.5) * 0.6 - 0.1; // slight upward bias
+  const rot = Math.random() * 360;
+  const rotSpeed = (Math.random() - 0.5) * 0.6;
+  const life = 6 + Math.random() * 4;
+  const p = { el, x, y, vx, vy, rot, rotSpeed, life, age: 0, baseOpacity: opacity || 0.28 };
+  smokeManager.particles.push(p);
+}
+
 function createSmoke(layer, x, y, size, opacity) {
+  if (!smokeManager.layer) smokeManager.layer = layer;
   const smoke = document.createElement("span");
   smoke.className = "smoke-particle";
   smoke.style.left = `${x}px`;
   smoke.style.top = `${y}px`;
-  smoke.style.width = `${size + Math.random() * 18}px`;
-  smoke.style.height = `${size + Math.random() * 18}px`;
-  smoke.style.opacity = opacity;
+  const w = Math.max(10, size + Math.random() * 28);
+  const h = Math.max(8, size * (0.6 + Math.random() * 0.6));
+  smoke.style.width = `${w}px`;
+  smoke.style.height = `${h}px`;
+  smoke.style.opacity = opacity ?? 0.28;
+  smoke.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg) scale(${0.12 + Math.random() * 0.26})`;
   layer.appendChild(smoke);
-  setTimeout(() => {
-    smoke.remove();
-  }, 3200);
+  addParticle(smoke, x, y, w, h, opacity || 0.28);
 }
 
 function createWave(layer, x, y, size, opacity) {
@@ -166,3 +191,49 @@ function createWave(layer, x, y, size, opacity) {
     wave.remove();
   }, 950);
 }
+
+// animation loop for smoke particles
+let lastSmokeTick = performance.now();
+function smokeTick(now) {
+  const dt = Math.min(0.05, (now - lastSmokeTick) / 1000);
+  lastSmokeTick = now;
+  const particles = smokeManager.particles;
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.age += dt;
+    // random jitter
+    p.vx += (Math.random() - 0.5) * 0.02;
+    p.vy += (Math.random() - 0.5) * 0.02;
+    // natural drift
+    p.x += p.vx * 60 * dt;
+    p.y += p.vy * 60 * dt;
+    p.rot += p.rotSpeed * 30 * dt;
+    const lifeRatio = Math.max(0, 1 - p.age / p.life);
+    const opacity = Math.min(1, p.baseOpacity * lifeRatio * 1.2);
+    p.el.style.transform = `translate(-50%, -50%) translate(${p.x - parseFloat(p.el.style.left)}px, ${p.y - parseFloat(p.el.style.top)}px) rotate(${p.rot}deg) scale(1)`;
+    p.el.style.opacity = `${opacity}`;
+    // remove if too old or offscreen
+    if (p.age > p.life || p.x < -200 || p.x > window.innerWidth + 200 || p.y < -200 || p.y > window.innerHeight + 200) {
+      p.el.remove();
+      particles.splice(i, 1);
+    }
+  }
+
+  // attraction: pull nearby particles towards mouse if present
+  if (smokeManager.mouse) {
+    const mx = smokeManager.mouse.x;
+    const my = smokeManager.mouse.y;
+    for (const p of particles) {
+      const dx = mx - p.x;
+      const dy = my - p.y;
+      const dist = Math.hypot(dx, dy) + 0.001;
+      const influence = Math.max(0, 1 - dist / 220);
+      p.vx += (dx / dist) * 0.06 * influence;
+      p.vy += (dy / dist) * 0.06 * influence;
+    }
+  }
+
+  requestAnimationFrame(smokeTick);
+}
+
+requestAnimationFrame(smokeTick);

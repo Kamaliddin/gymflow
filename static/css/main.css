@@ -233,11 +233,13 @@ a:hover {
   position: absolute;
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(235, 255, 240, 0.40) 0%, rgba(170, 235, 205, 0.18) 45%, transparent 100%);
-  filter: blur(4px);
-  opacity: 0.4;
-  transform: translate(-50%, -50%) scale(0.18);
-  animation: smokeFloat 3.2s ease-out forwards;
+  /* soft pale green-white smoke with radial falloff */
+  background: radial-gradient(circle, rgba(235,255,240,0.6) 0%, rgba(190,240,210,0.22) 45%, transparent 85%);
+  filter: blur(6px);
+  opacity: 0.32;
+  transform: translate(-50%, -50%) rotate(0deg) scale(0.18);
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
 }
 
 .typing-text.from-right {
@@ -281,19 +283,7 @@ a:hover {
   to { width: 100%; }
 }
 
-@keyframes smokeFloat {
-  0% {
-    opacity: 0.35;
-    transform: translate(-50%, -50%) scale(0.18);
-  }
-  35% {
-    opacity: 0.28;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(14px, -78px) scale(1.05);
-  }
-}
+/* smoke movement is driven by JavaScript for varied motion and attraction */
 
 @keyframes uniteBack {
   0% {
