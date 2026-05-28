@@ -652,29 +652,27 @@
   }
 
   document.getElementById("btn-add-table")?.addEventListener("click", async () => {
-  try {
-
-    const dayTables = (planData?.tables || []).length;
-    if (dayFilter && dayTables >= 3) {
-      alert("Maximum 3 tables per day.");
-      return;
+    try {
+      const dayTables = (planData?.tables || []).length;
+      if (dayFilter && dayTables >= 3) {
+        alert("Maximum 3 tables per day.");
+        return;
+      }
+      const name = prompt("Table name:", "Workout");
+      const days = dayFilter ? [parseInt(dayFilter, 10)] : [];
+      await api("/api/tables", {
+        method: "POST",
+        body: JSON.stringify({
+          member_id: memberId ? parseInt(memberId, 10) : null,
+          name: name || "Workout",
+          repeat_days: days,
+        }),
+      });
+      await loadPlan();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to create table: ' + (err.message || err));
     }
-    const name = prompt("Table name:", "Workout");
-    const days = dayFilter ? [parseInt(dayFilter, 10)] : [];
-    await api("/api/tables", {
-      method: "POST",
-      body: JSON.stringify({
-        member_id: memberId ? parseInt(memberId, 10) : null,
-        name: name || "Workout",
-        repeat_days: days,
-      }),
-    
-  } catch (err) {
-    console.error(err);
-    alert('Failed to create table: ' + (err.message || err));
-  }
-});
-    await loadPlan();
   });
 
   document.getElementById("day-filter")?.addEventListener("change", (e) => {
