@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/plan_new.css">{% endblock %}
+{% block extra_js %}<script src="/static/js/plan_new.js" defer></script>{% endblock %}
+
+{% block content %}
+<section class="plan-header">
+  <h1>Workout (New)</h1>
+  <div class="plan-controls">
+    {% if user %}
+      <a class="btn" href="/logout">Logout</a>
+    {% else %}
+      <a class="btn btn-primary" href="/login">Login</a>
+      <a class="btn" href="/register">Register</a>
+    {% endif %}
+  </div>
+</section>
+
+<main id="workout-app">
+  <div id="workout-list">Loading workouts...</div>
+</main>
+
+<footer class="plan-footer">
+  <small>Minimal workout viewer using existing API.</small>
+</footer>
+{% endblock %}

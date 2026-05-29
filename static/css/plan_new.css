@@ -1,0 +1,6 @@
+body { background: var(--color-bg, #0b0b0b); color: var(--color-accent, #cde); font-family: system-ui, sans-serif; }
+.plan-header { display:flex; justify-content:space-between; align-items:center; padding:1rem; }
+.plan-header h1{ margin:0; }
+.table{ border:1px solid rgba(255,255,255,0.06); padding:0.75rem; margin:0.75rem 0; border-radius:6px; }
+.table h2{ margin:0 0 0.5rem 0; font-size:1rem }
+.table ul{ margin:0; padding-left:1rem }

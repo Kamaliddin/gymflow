@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block extra_css %}<link rel="stylesheet" href="/static/css/plan.css">{% endblock %}
+{% block extra_js %}<script src="/static/js/plan.js" defer></script>{% endblock %}
+
+{% block content %}
+<!-- BACKUP of original plan.html -->
+<!-- backup created before rewrite -->
+{% endblock %}
